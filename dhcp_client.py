@@ -59,15 +59,38 @@ def release_ip(src_mac, offered_ip, server_ip, trans_id, interface):
 
     print('IP released!')
 
+def send_arp(target_ip, src_ip, interface):
+    ethernet = Ether( dst = 'ff:ff:ff:ff:ff:ff')
+    arp = ARP( pdst = target_ip, psrc = src_ip )
+    packet = ethernet / arp
 
+    sendp( packet, interface, verbose = 0 )
 
+def sniff_packet(interface):
+    print('start')
+    sniff(prn = packet_handle)
+    print('end')
+
+def packet_handle(pkt):
+    #pkt.show()
+    if DHCP in pkt:
+        print('dhcp')
+    elif ICMP in pkt:
+        print('icmp')
+    elif ARP in pkt:
+        print('arp')
+    else:
+        print('else')
+
+#sniff_packet(my_interface)
+
+#send_arp('10.188.7.5', '10.188.7.101', my_interface)
+
+"""
 send_discover(my_src_mac, my_trans_id, my_interface)
 
 offer = receive_offer(my_interface)
 
-#server_mac = received_offer[0]['Ether'].src
-#server_ip = received_offer[0]['IP'].src
-#offered_ip = received_offer[0]['BOOTP'].yiaddr
 send_request(my_src_mac, my_trans_id, offer[0]['BOOTP'].yiaddr, offer[0]['IP'].src , 'test_hostname', my_interface)
 
 receive_ack(my_interface)
@@ -77,3 +100,4 @@ time.sleep(5)
 print('End sleeping')
 
 release_ip(my_src_mac, offer[0]['BOOTP'].yiaddr, offer[0]['IP'].src, my_trans_id, my_interface )
+"""
